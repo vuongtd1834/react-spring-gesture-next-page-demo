@@ -7,7 +7,7 @@ import Styles from './App.module.scss';
 const pages = [
   'https://images.pexels.com/photos/62689/pexels-photo-62689.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
   'https://images.pexels.com/photos/296878/pexels-photo-296878.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-  'https://images.pexels.com/photos/1509428/pexels-photo-1509428.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+  // 'https://images.pexels.com/photos/1509428/pexels-photo-1509428.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
   'https://images.pexels.com/photos/351265/pexels-photo-351265.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
   'https://images.pexels.com/photos/924675/pexels-photo-924675.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260'
 ]
@@ -15,8 +15,8 @@ const pages = [
 function App() {
   const index = useRef(0)
   const [props, set] = useSprings(pages.length, i => ({ x: i * window.innerWidth, sc: 1, display: 'block' }))
-  const bind = useDrag(({ down, delta: [xDelta], direction: [xDir], distance, cancel }) => {
-    if (down && distance > window.innerWidth / 2)
+  const bind = useDrag(({ down, delta: [xDelta], direction: [xDir], distance, cancel, vxvy }) => {
+    if (down && distance > window.innerWidth / 2 && Math.abs(vxvy[0]) > Math.abs(vxvy[1]))
       cancel((index.current = clamp(index.current + (xDir > 0 ? -1 : 1), 0, pages.length - 1)))
     set(i => {
       if (i < index.current - 1 || i > index.current + 1) return { display: 'none' }
@@ -52,7 +52,22 @@ function App() {
         {
           props.map(({ x, display, sc }, i) => (
             <animated.div {...bind()} key={i} style={{ display, transform: x.interpolate(x => `translate3d(${x}px,0,0)`) }}>
-              <animated.div style={{ transform: sc.interpolate(s => `scale(${s})`), backgroundImage: `url(${pages[i]})` }} />
+              {/* <animated.div style={{ transform: sc.interpolate(s => `scale(${s})`), backgroundImage: `url(${pages[i]})`, overflowY: 'auto' }}> */}
+              <animated.div style={{ backgroundImage: `url(${pages[i]})`, overflowY: 'auto' }}>
+                {
+                  Array(10).fill(0).map(it => <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    height: '200px',
+                    color: 'black',
+                    fontSize: '24px',
+                    backgroundColor: "white",
+                    margin: "4px 0px"
+                  }}>Test</div>)
+                }
+              </animated.div>
             </animated.div>
           ))
         }
